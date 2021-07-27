@@ -14,11 +14,12 @@ struct StoreResponse {
     message: String,
 }
 
-#[derive(Debug, FromForm)]
+#[derive(Debug, FromForm,Clone)]
 pub struct StoreRequest {
     name: String,
     email: String,
     password: String,
+    #[field(validate = eq(self.password.clone()))]
     password_confirm: String,
 }
 
@@ -35,18 +36,17 @@ struct NewUser {
 
 #[post("/", data = "<request>")]
 pub async fn store(db: Db, request: Form<StoreRequest>) -> Json<StoreResponse> {
-    println!("{:?}", request);
+
+    let new_user = NewUser{
+        name: request.name.clone(),
+        email: request.email.clone(),
+        email_verified_at: None,
+        password:  request.password.clone(),
+        created_at: Utc::now().naive_local(),
+        updated_at: Utc::now().naive_local(),
+    };
 
     let result: usize = db.run(move |conn| {
-
-        let new_user = NewUser{
-            name: request.name.parse().unwrap(),
-            email: request.email.parse().unwrap(),
-            email_verified_at: None,
-            password:  request.password.to_string(),
-            created_at: Utc::now().naive_local(),
-            updated_at: Utc::now().naive_local(),
-        };
 
         diesel::insert_into(crate::schema::users::table)
             .values(&new_user)
