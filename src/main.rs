@@ -7,6 +7,7 @@ mod schema;
 mod routes;
 mod actions;
 mod models;
+mod dto;
 
 use rocket::{Rocket, Build};
 use rocket::response::Debug;

@@ -5,7 +5,7 @@ use rocket::serde::json::Json;
 use serde::Serialize;
 use crate::schema::users;
 use diesel::prelude::*;
-use crate::models::user::UserIndex;
+use crate::dto::user_dot::UserIndex;
 use crate::WebResult;
 
 #[get("/")]
