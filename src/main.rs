@@ -8,6 +8,7 @@ mod routes;
 mod actions;
 mod models;
 mod dto;
+mod transactions;
 
 use rocket::{Rocket, Build};
 use rocket::response::Debug;
