@@ -1,6 +1,7 @@
 #[macro_use] extern crate rocket;
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate rocket_sync_db_pools;
+#[macro_use] extern crate serde_json;
 
 mod user;
 mod database;
@@ -10,7 +11,7 @@ use rocket::{Rocket, Build};
 use rocket::response::Debug;
 use database::Db;
 
-pub type WebResult<T, E = Debug<diesel::result::Error>> = std::result::Result<T, E>;
+pub type ApiResult<T> = Result<T, error::Error>;
 
 #[launch]
 fn rocket() -> Rocket<Build> {
