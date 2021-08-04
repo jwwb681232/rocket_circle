@@ -4,6 +4,8 @@
 
 mod user;
 mod database;
+mod error;
+
 use rocket::{Rocket, Build};
 use rocket::response::Debug;
 use database::Db;
