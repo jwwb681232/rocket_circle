@@ -7,6 +7,7 @@ use crate::schema::users;
 use diesel::prelude::*;
 use crate::dto::user_dot::UserIndex;
 use crate::WebResult;
+use bcrypt::{hash};
 
 #[get("/")]
 pub async fn index(db: Db) -> WebResult<Json<Vec<UserIndex>>> {
@@ -63,7 +64,7 @@ pub async fn store(db: Db, request: Form<StoreRequest>) -> Json<StoreResponse> {
             name: req.name,
             email: req.email,
             email_verified_at: None,
-            password:  req.password,
+            password:  hash(req.password,4).unwrap(),
             created_at: Utc::now().naive_local(),
             updated_at: Utc::now().naive_local(),
         };

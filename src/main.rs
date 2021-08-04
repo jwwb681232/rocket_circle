@@ -21,4 +21,5 @@ fn rocket() -> Rocket<Build> {
     rocket::build()
         .attach(Db::fairing())
         .attach(routes::users::index())
+        .attach(routes::auth::index())
 }
