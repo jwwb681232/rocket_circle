@@ -2,17 +2,11 @@
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate rocket_sync_db_pools;
 
-mod bootstrap;
-mod schema;
-mod routes;
-mod actions;
-mod models;
-mod dto;
-mod transactions;
-
+mod user;
+mod database;
 use rocket::{Rocket, Build};
 use rocket::response::Debug;
-use crate::bootstrap::database::Db;
+use database::Db;
 
 pub type WebResult<T, E = Debug<diesel::result::Error>> = std::result::Result<T, E>;
 
@@ -20,6 +14,5 @@ pub type WebResult<T, E = Debug<diesel::result::Error>> = std::result::Result<T,
 fn rocket() -> Rocket<Build> {
     rocket::build()
         .attach(Db::fairing())
-        .attach(routes::users::index())
-        .attach(routes::auth::index())
+        .attach(user::routes())
 }
