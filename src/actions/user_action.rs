@@ -26,7 +26,7 @@ pub async fn index(db: Db) -> WebResult<Json<Vec<UserIndex>>> {
 
 
 #[derive(Serialize)]
-struct StoreResponse {
+pub struct StoreResponse {
     code: u16,
     data: Option<Vec<i32>>,
     message: String,
