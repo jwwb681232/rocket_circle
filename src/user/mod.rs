@@ -6,8 +6,8 @@ use crate::user::model::User;
 use chrono::{Local, TimeZone};
 use rocket::serde::json::Json;
 use crate::database::Db;
-use crate::ApiResult;
-use crate::error::Error;
+use crate::{ApiResult, InternalResult};
+use crate::error::{Error, InternalError};
 
 pub fn routes() -> AdHoc {
     AdHoc::on_ignite("user_route_index", |rocket| async {
@@ -19,24 +19,10 @@ pub fn routes() -> AdHoc {
 
 
 #[get("/")]
-pub async fn index(db: Db) -> ApiResult<Json<Vec<User>>> {
+pub async fn index(db: Db) -> InternalResult<&'static str> {
+    let res = std::fs::read_to_string("address.txt")?;
+    println!("{:?}",res);
 
-    return Err(Error::NotFound(json!({
-        "name": "John Doe",
-        "age": 43,
-        "phones": [
-            "+44 1234567",
-            "+44 2345678"
-        ]
-    })));
 
-    let results = User::list(db).await.unwrap();
-
-    /*for result in &results {
-        println!("{:#?}", Local.timestamp(result.created_at.timestamp(), 0).to_rfc2822().to_string());
-        println!("{:#?}", Local.timestamp(result.created_at.timestamp(), 0).to_rfc3339().to_string());
-        println!("{:#?}", Local.timestamp(result.created_at.timestamp(), 0).format("%Y-%m-%d %H:%M:%S").to_string());
-    }*/
-
-    Ok(Json(results))
+    Ok("test")
 }

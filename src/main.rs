@@ -12,6 +12,7 @@ use rocket::response::Debug;
 use database::Db;
 
 pub type ApiResult<T> = Result<T, error::Error>;
+pub type InternalResult<T> = Result<T, error::InternalError>;
 
 #[launch]
 fn rocket() -> Rocket<Build> {
