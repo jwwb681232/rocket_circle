@@ -22,15 +22,6 @@ pub fn routes() -> AdHoc {
 #[get("/")]
 pub async fn index(db: Db) -> ApiResult<Json<Vec<model::User>>> {
 
-    /*return Err(Error::NotFound(json!({
-        "name": "John Doe",
-        "age": 43,
-        "phones": [
-            "+44 1234567",
-            "+44 2345678"
-        ]
-    })));*/
-
     let results = model::User::list(db).await.unwrap();
 
     /*for result in &results {
@@ -44,7 +35,7 @@ pub async fn index(db: Db) -> ApiResult<Json<Vec<model::User>>> {
 
 #[post("/", data = "<request>")]
 pub async fn create(db:Db,request:Form<form::User>)->ApiResult<String>{
-    Ok(
-        model::User::create(db, request).await.to_string()
-    )
+    let res = model::User::create(db, request).await?;
+
+    Ok(res.to_string())
 }

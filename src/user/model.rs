@@ -6,6 +6,10 @@ use diesel::prelude::*;
 use super::schema::users::dsl::users as users_table;
 use super::form::User as FormUser;
 use rocket::form::Form;
+use bcrypt::hash;
+use crate::InternalResult;
+use crate::error::ApiError::InternalError;
+use crate::error::InternalError::Database;
 
 #[derive(Serialize, Debug, AsChangeset, Queryable, Insertable)]
 #[table_name = "users"]
@@ -31,7 +35,7 @@ impl User {
         results
     }
 
-    pub async fn create(db:Db,request:Form<FormUser>)->bool{
+    pub async fn create(db:Db,request:Form<FormUser>)->InternalResult<usize>{
 
         let req = request.clone();
 
@@ -42,17 +46,17 @@ impl User {
                     (
                         users::dsl::name.eq(req.name),
                         users::dsl::email.eq(req.email),
-                        users::dsl::password.eq(req.password),
+                        users::dsl::password.eq(hash(req.password,4).unwrap()),
                         users::dsl::remember_token.eq(""),
                         users::dsl::created_at.eq(Utc::now().naive_local()),
                         users::dsl::updated_at.eq(Utc::now().naive_local()),
                     )
                 )
-                .execute(conn)
+                .execute(conn).map_err(|e|InternalError(Database(e.to_string())))
 
-        }).await.is_ok();
+        }).await?;
 
         println!("{:?}",res);
-        true
+        Ok(res)
     }
 }
