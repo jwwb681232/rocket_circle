@@ -1,9 +1,11 @@
-use chrono::NaiveDateTime;
+use chrono::{NaiveDateTime, Utc};
 use serde::Serialize;
 use super::schema::users;
 use crate::database::Db;
 use diesel::prelude::*;
 use super::schema::users::dsl::users as users_table;
+use super::form::User as FormUser;
+use rocket::form::Form;
 
 #[derive(Serialize, Debug, AsChangeset, Queryable, Insertable)]
 #[table_name = "users"]
@@ -27,5 +29,30 @@ impl User {
         //println!("{:#?}",results);
 
         results
+    }
+
+    pub async fn create(db:Db,request:Form<FormUser>)->bool{
+
+        let req = request.clone();
+
+        let res = db.run(move |conn|{
+
+            diesel::insert_into(users_table)
+                .values(
+                    (
+                        users::dsl::name.eq(req.name),
+                        users::dsl::email.eq(req.email),
+                        users::dsl::password.eq(req.password),
+                        users::dsl::remember_token.eq(""),
+                        users::dsl::created_at.eq(Utc::now().naive_local()),
+                        users::dsl::updated_at.eq(Utc::now().naive_local()),
+                    )
+                )
+                .execute(conn)
+
+        }).await.is_ok();
+
+        println!("{:?}",res);
+        true
     }
 }

@@ -32,8 +32,8 @@ impl<'a> Responder<'a, 'static> for Error {
     }*/
 
     fn respond_to<'r>(self, _: &'r Request<'_>) -> rocket::response::Result<'static> {
-        let mut body;
-        let mut status;
+        let body;
+        let status;
 
         match self {
             Error::Unauthorized(_) => {body = "Unauthorized".to_string();status = Status::Unauthorized;}
