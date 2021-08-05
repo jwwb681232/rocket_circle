@@ -1,8 +1,10 @@
-use rocket::serde::json::Value;
 use thiserror::Error;
+use std::io::Cursor;
+use rocket::serde::json::Value;
 use rocket::response::Responder;
 use rocket::Request;
 use rocket::http::Status;
+use rocket::http::ContentType;
 
 #[derive(Error, Debug)]
 pub enum Error{
@@ -42,9 +44,8 @@ impl<'a> Responder<'a, 'static> for Error {
         }
 
         rocket::Response::build()
-            .sized_body(body.len(), std::io::Cursor::new(body))
-            .header(rocket::http::ContentType::new("Content-Type", "application/x-www-form-urlencoded"))
-            .header(rocket::http::ContentType::new("Accept", "application/json"))
+            .sized_body(body.len(), Cursor::new(body))
+            .header(ContentType::new("application", "json"))
             .status(status)
             .ok()
     }
